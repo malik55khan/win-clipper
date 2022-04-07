@@ -1,30 +1,20 @@
-try {
-	console.log("Service worker")
-	chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-		console.log(tabs[0]);
-	});
-	importScripts('utility.js');
-	importScripts('screenshot.js');
-	console.log("screenshot", screenshot)
-} catch (error) {
-	console.log(error)
-}
 var api = {
     init: function () {
-		chrome.runtime.onMessage.addListener(function (data, sender, callback) {
-			
-			switch (data.data) {
-				case "createTab": chrome.tabs.create({ url: data.url });
-				case "captureVisibleTab": chrome.tabs.captureVisibleTab(null, {
-					format: 'png'
-				}, callback); break;
-				case "myId": callback(sender); break;
-				case "getZoom": chrome.tabs.getZoom(sender.tab.id, callback); break;
-				case "captureVisible":
-					screenshot.captureVisible({ ...data, callback: callback });
+        chrome.runtime.onMessage.addListener(function (data, sender, callback) {
+            switch (data.data) {
+                case "captureVisible":
+                    screenshot.captureVisible(
+                        $.extend({}, data, {
+                            callback: callback,
+                        })
+                    );
                     break;
                 case "captureFullPage":
-					screenshot.captureAll({ ...data, callback: callback });
+                    screenshot.captureAll(
+                        $.extend({}, data, {
+                            callback: callback,
+                        })
+                    );
                     break;
                 case "captureRegion":
                     screenshot.captureRegion();

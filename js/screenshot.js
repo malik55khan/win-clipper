@@ -17,15 +17,13 @@ var screenshot = {
 		return true;
 	},
     captureVisible: function (data) {
-        screenshot = {
-            ...screenshot, ...{
-                scroll: false,
-                cropData: null,
-                retries: 0,
-                showScrollBar: true,
-                processFixedElements: false
-            }, ...data
-}
+        $.extend(screenshot, {
+            scroll: false,
+            cropData: null,
+            retries: 0,
+            showScrollBar: true,
+            processFixedElements: false
+        }, data);
         localStorage['captureWithoutScroll']++;
         screenshot.load(screenshot.addScreen);
         screenshot.createBrowserProperties();
@@ -116,7 +114,7 @@ var screenshot = {
             screenshot.screens = [];
             screenshot.description = '';
             callback = function () {
-                setTimeout(realCallback, (parseInt(0, 10) || 0) * 1000)
+                window.setTimeout(realCallback, (parseInt(0, 10) || 0) * 1000)
             };
             if (!localStorage['captureCount']) localStorage['captureCount'] = 0;
             callback();
@@ -124,16 +122,14 @@ var screenshot = {
     },
     addScreen: function (data) {
         screenshot.retries++;
-        
-        chrome.tabs.sendMessage(screenshot.thisTabId, {
+        chrome.tabs.sendMessage(screenshot.thisTabId, $.extend({
             cropData: screenshot.cropData,
             type: 'takeCapture',
             start: true,
             scroll: screenshot.scroll,
             showScrollBar: screenshot.showScrollBar,
-            processFixedElements: screenshot.processFixedElements,
-            ...data
-        }, screenshot.ans);
+            processFixedElements: screenshot.processFixedElements
+        }, data), screenshot.ans);
     },
     ans: function (mess) {
         if (!mess && chrome.runtime.lastError) {
@@ -237,7 +233,7 @@ var screenshot = {
             screenshot.browserProperties.chromeVersion = navigator.userAgent.match(/Chrom(?:e|ium)\/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)/)[0].split("/")[1];
             screenshot.browserProperties.screenSize = screen.width + " x " + screen.height;
             screenshot.browserProperties.osVersion = navigator.appVersion.split("(")[1].split(";")[0];
-            //screenshot.browserProperties.pixelRatio = window.devicePixelRatio;
+            screenshot.browserProperties.pixelRatio = window.devicePixelRatio;
 			 if (chrome.runtime.lastError) {
                         //console.error(chrome.runtime.lastError);
             }

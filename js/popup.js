@@ -187,21 +187,11 @@ var popup = {
 		});
 		
     },	
-	sendMessage: function (data) {
-		chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-			if (tabs.length) {
-				console.log(tabs[0])
-				chrome.tabs.sendMessage(tabs[0].id, data, function (x) {
-					console.log(data);
-					//this.close();
-				});
-			}
-		})
-
-        // chrome.runtime.sendMessage(data, function (x) {
-        //     console.log(data);
-		// 	this.close();
-        // });
+    sendMessage: function (data) {
+        chrome.runtime.sendMessage(data, function (x) {
+            console.log(data);
+			this.close();
+        });
     }
 };
 function openNewWindow(lassoURL) {

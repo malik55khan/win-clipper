@@ -1,7 +1,4 @@
-﻿var screenshot = chrome.runtime.getBackgroundPage().screenshot;
-chrome.runtime.getBackgroundPage().then(x => {
-    console.log('x',x) 
-})
+﻿var screenshot = chrome.extension.getBackgroundPage().screenshot;
 
 var canvas = new fabric.Canvas('annotate-canvas');
 var colorToUse = "#000000";
@@ -13,9 +10,9 @@ var canvasImageContainsSelectedAreaCapture = false;
 var textPaddingTopBottom = 8;
 var textPaddingLeftRight=10;
 $(function () {
-    chrome.storage.local.get('dataURL',(d)=>{
 
-    fabric.Image.fromURL(d.dataURL, function (img) {
+
+    fabric.Image.fromURL(screenshot.canvas.toDataURL(), function (img) {
         canvasImageContainsSelectedAreaCapture = false;
         //fabric.Image.fromURL("screenshot.png", function (img) {
         // debugger;
@@ -47,7 +44,7 @@ $(function () {
         }
         canvas.renderAll();
     });
-    })
+
 });
 
 canvas.on('object:added', (e) => {
