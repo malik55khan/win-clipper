@@ -1,0 +1,37 @@
+{
+    "name": "Screenshot & Bookmark Manager by Lasso",
+    "version": "1.4.10",
+    "manifest_version": 3,
+    "description": "Collect ideas to inspire your creativity. Save screenshots, web links and more.",
+	"action": {
+        "default_title": "Click to launch Lasso",
+        "default_popup": "popup.html"
+    },
+    "background": {
+        "service_worker": "js/background.js"
+    },
+    "icons": { 
+        "32": "img/32x32.png",
+        "48": "img/48x48.png",
+        "128": "img/128x128.png" 
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["libs/jquery.js","libs/cropper.js","js/content_script.js"],
+            "css": ["css/content-script-style.css"]
+        }
+    ],
+	"web_accessible_resources": [{
+	  "resources": ["/img/*.png","/libs/jquery.js"],
+	  "matches": ["<all_urls>"]
+	}],	
+    "permissions": [
+        "activeTab","storage","tabs"
+    ], 
+	"host_permissions": [
+		"*://*.lasso.net/*",
+		"*://*/*",
+        "<all_urls>"
+	]
+}

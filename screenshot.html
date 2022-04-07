@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<!-- saved from url=(0061)http://zoyasoft.com/Aaron/extention-html/screenshot_edit.html -->
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Extension HTML</title>
+    <link rel="stylesheet" type="text/css" href="./css/css.css">
+    <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+<body>
+    <div class="container-page gray-bg">
+
+        <!--Screenshot.html start -->
+
+        <div id="lassoEditContainerHeader" class="editContainerHeader">
+            
+			<div class="editContainerIframeHeader" id="headerEditContainer" style="background-color:#e9ecef;">
+                <div id="loader" style="display:none"></div>
+                <div class="alert alert-success" id="success-alert" style="position: fixed;left:45%;opacity:1;z-index:100;display:none;padding-left: 24px;width: 144px;background-color:#ffff99;color:#000;font-weight:bold;font-size: 14px;">
+                     Saved to Lasso
+                </div>
+                <div class="headerContent " id="iframeContainerHeaderContent" style="display:none; padding-top: 0px; ">
+                    <iframe id='MainPopupIframe' src='' width="100%" height="145px" scrolling="no" align="top" frameborder="0" scrolling="yes"
+                        style="margin: 0px; height: 155px;"></iframe>
+                </div>
+				<div class="headerContent " id="iframeContainerHeaderContentAddItem" style="display:none; padding-top: 0px; ">
+                    <iframe id='MainPopupIframeAddItem' src='' width="100%" height="259px" scrolling="no" align="top" frameborder="0" scrolling="yes"
+                        style="margin: 0px; height: 267px;"></iframe>
+                </div>
+                <div class="headerContent container" id="lassoInputHeaderContent" style="display:none">
+                    <div class="dropdown integration-channel-dropdown" style="margin-left:70px">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false" style="width:200px;">
+                            Select Channel
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="padding:0;width:200px; overflow: hidden;">
+                            <a class="dropdown-item" data-domain='saveToLasso' id="saveToLassoOption" style="padding-top:1px;padding-bottom:1px;padding-left:6px;cursor:pointer;">Save to Lasso</a>
+                        </div>
+                    </div>
+                    <div class="dropdown channel-item-options report">
+                        
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="collectionDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            Select a collection
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="padding:0; height: auto; max-height: 450px;overflow-x: hidden;">
+
+                        </div>
+                    </div>
+					<input type="hidden" id="resourceRefId" name="resourceRefId" value=""/>
+					<input type="hidden" id="actionType" name="actionType" value="3"/>
+                    <input class="form-control note" type="text" name="" id="titleTextbox" placeholder="Enter Title">
+                    <button type="button" class="saveScreenshotBtn">Save</button>
+                    <button type="button" class="logoutBtn">Logout</button>
+                </div>
+
+                <div class="headerContent" id="welcomeMessageHeaderContent" style="display:none;">
+					<div id="bookmarkWrapper">
+						<div id="bookmarkWrapperInner">
+							<div class="top-bar">
+								<div class="logo">
+									<a target="_blank"  href="javascript: void(0)"><img height="22px" src="img/lasso-logo.png"  alt="Lasso Logo"></a>
+								</div>
+								<span id="headerMsg" class="col-sm-12" ><a id="loginLink" href="">Login</a> or <a id="signupLink" href="">Sign up</a> to save image to Lasso.</span>
+							</div>
+						</div>
+					</div>
+                </div>
+				
+                <div class="headerContent" id="reopenMessageHeaderContent" style="display:none;">
+					<div id="bookmarkWrapper">
+						<div id="bookmarkWrapperInner">
+							<div class="top-bar">
+								<div class="logo">
+									<a target="_blank"  href="javascript: void(0)"><img height="22px" src="img/lasso-logo.png"  alt="Lasso Logo"></a>
+								</div>
+								<span id="headerMsg" class="col-sm-12"><a id="reopenLink" href="#">Re-open</a> to edit image.</span>
+							</div>
+						</div>
+					</div>
+                </div>
+				
+				 <div class="headerContent" id="reopenMessageHeaderContentFromAdd" style="display:none;">
+					<div id="bookmarkWrapper">
+						<div id="bookmarkWrapperInner">
+							<div class="top-bar">
+								<div class="logo">
+									<a target="_blank"  href="javascript: void(0)"><img height="22px" src="img/lasso-logo.png"  alt="Lasso Logo"></a>
+								</div>
+								<span id="headerMsg" class="col-sm-12"><a id="reopenLinkOther" href="#">Re-open</a> to edit image.&nbsp;&nbsp;<a id="closeWindow" href="#">Close</a> to close this tab.</span>
+							</div>
+						</div>
+					</div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="editContainerToolBar">
+            <div class="editContainer">
+                <div id="toolbar" class="toolBarContent">
+                    <div title="undo" class="iconBlock button undo" style="pointer-events:none">
+                        <img src="./img/icon-undo.png" alt="">
+                    </div>
+                    <div title="redo" class="iconBlock button last redo" style="pointer-events:none">
+                        <img src="./img/icon-redo.png" alt="">
+                    </div>
+                    <div title="arrow" class="iconBlock button arrow">
+                        <img src="./img/icon-line-arrow.png" alt="">
+                    </div>
+                    <div class="iconBlock button text" title="add text">
+                        <img src="./img/icon-text.png" alt="">
+                    </div>
+                    <div title="ellipsis" class="iconBlock  button oval">
+                        <img src="./img/icon-cycle.png" alt="">
+                    </div>
+                    <div title="rectangle" class="iconBlock button rectangle">
+                        <img src="./img/icon-rectangle.png" alt="">
+                    </div>
+                    <!-- <div class="iconBlock button blur" title="Blur">
+                        <img src="./img/icon-blur.png"  >
+                    </div>-->
+                    <div class="iconBlock" title="select color">
+                        <img src="./img/icon-cycle.png" class="colorPickerButtonClass" alt="" id="colorPickerButton">
+                        <!--<div class="colorPickerButtonClass" alt="" id="colorPickerButton">-->
+                        <div class="tooltip" id="colorPickerExpansionDiv" style="display:none">
+                            <div class="triangle"></div>
+                            <ul>
+                                <li data-colorcode="#FFFF00" class="choose-color yellow"><span></span></li>
+                                <li data-colorcode="#57a5ff" class="choose-color blue"><span></span></li>
+                                <li data-colorcode="#77d353" class="choose-color green"><span></span></li>
+                                <li data-colorcode="#f31010" class="choose-color red"><span></span></li>
+                                <li data-colorcode="#8b572a" class="choose-color brown"><span></span></li>
+                                <li data-colorcode="#000000" class="choose-color black"><span></span></li>
+                                <li data-colorcode="#ffffff" class="choose-color white"><span></span></li>
+                                <li data-colorcode="#cccccc" class="choose-color gray"><span></span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <span class="line_sep"></span>
+                    <div class="iconBlock" title="download image">
+                        <img src="./img/icon-download.png" alt="" class="save">
+                    </div>
+                    <!-- <div class="iconBlock" title="get link to image">
+                        <img src="./img/icon-unlink.png" alt="" >
+                    </div>-->
+                    <div class="iconBlock" title="copy to clipboard">
+                        <img src="./img/icon-clipboard.png" alt="" class="save-to-clipboard">
+                    </div>
+					 <div class="iconBlock" title="upload image">
+                        <img src="./img/icon-upload.png" alt="" class="browse-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="editContainerMiddle">
+            <div class="editContainer">
+                <div id="divCanvasData" class="middleContent">
+                    <div id="clipper">
+                        <canvas id="annotate-canvas" style="max-width: 100%;"></canvas>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!--  Screenshot Edit end-->
+
+    </div>
+
+
+    <div class="modal addCollectionModal" tabindex="-1" id="myModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderAddCollection">
+                    <div>
+                        <a  class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">×</span></a>
+
+
+                    </div>
+                    <!-- <button class="col-sm-12" type="button" style="margin-top: -2px" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button> -->
+                    <div class="col-sm-12">
+                        <h5 class="modal-title text-center col-sm-12">Add Collection</h5>
+
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="modalEditContainerHeader">
+
+                        <div class="modalHeaderContent" id="headerEditContainer">
+                            <div class="form-group row ">
+                                <div class="col-sm-1"></div>
+                                <label for="cname" class="col-sm-4 col-form-label">Collection Name</label>
+                                <input class="form-control col-sm-6 note" type="text" name="" id="collectionNameText" placeholder="Title">
+                                <div class="col-sm-1"></div>
+                            </div>
+                            <!-- <input class="form-control note" type="text" name="" id="titleTextbox" placeholder="Title"> -->
+                            <div class="form-group row ">
+                                <div class="col-sm-1"></div>
+                                <label for="cname" class="col-sm-4 col-form-label">Grouping</label>
+                                <div class="col-sm-6 dropdown collection-grouping-options dropdown-toggle-wrapper">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                    
+                                </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" id="saveToLassoOption" >Save to
+                                        Lasso</a>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1"></div>
+                            </div>
+
+                            <div class="form-group row ">
+                                <div class="col-sm-1"></div>
+                                <label for="cname" class="col-sm-4 col-form-label">Collection Type</label>
+                                <div class="col-sm-6 dropdown corral-type-options dropdown-toggle-wrapper">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="collectionTypeMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="collectionTypeMenuButton">
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-sm-1"></div>
+                            </div>
+                            <div class="form-group row ">
+                                <div class="col-sm-1"></div>
+                                <button class="btn col-sm-10 bttnAddCollection" type="button" id="addCollectionBtn">
+                                      Add Collection 
+                               </button>
+                                <div class="col-sm-1"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+
+	<div class="ImageModal" style="display:none"tabindex="-1" id="myModalImage" role="dialog">
+			<div class="addCorralImage addCorralImageShow">
+				<a class="closeButtonUpload" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</a>
+				<div class="addCorralImageArr"></div>
+				<h1>Add Image</h1>
+				<div class="addCorralImageForm">
+					<div class="add-new-photo-div" style="width: 93% !important; float: none !important;">
+						<img id="homeImage" style="margin-top:16px;" class="add-photo-margin-top" src="https://cdn.vflyer.com/r1/sr/1/4/1/2/0/8/8/8/1/141208881/141208881.png">
+						<input type="file" accept="image/*" name="uploddImageTag" id="uploddImageTag" class="vff-file-upload-input add-new-photo-div-input">
+						<p style="color: #fff;font-weight: 700;padding-top: 8px;">Click or drag and drop to upload image</p>
+					</div>
+				</div>
+			</div>
+	</div>
+	
+        <!-- Add corral(new UI) pop-uop starts here -->
+        <!-- Add corral(new UI) pop-up ends here -->
+
+        <script src="./js/config.js"></script>
+        <script src="./libs/jquery.js"></script>
+        <script src="./libs/js.cookie.min.js"></script>
+        <script src="./libs/popper.min.js"></script>
+        <script src="./libs/bootstrap.min.js"></script>
+        <script src="./libs/fabric.min.js"></script>
+        <script src="./js/fabric-annotation.js"></script>
+        <script src="./js/screen-share-manager.js"></script>
+
+</body>
+
+</html>

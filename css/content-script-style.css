@@ -1,0 +1,36 @@
+
+/*====================click drag button=====================*/
+
+.lasso-screen-capture-ext.clickDragBtn {
+	height: 50px;
+	object-fit: contain;
+	border-radius: 4px;
+	background-color: rgba(0, 0, 0, 0.6);
+	position: fixed;
+    left: 40%;
+	top: 120px;
+    border: none;
+	display: flex;
+    justify-content: flex-start;
+	align-items: center;
+	padding: 0 20px;
+	outline: none;
+	cursor: pointer;
+	margin-top: 75px;
+	z-index: 1000000000005;
+
+}
+.lasso-screen-capture-ext.clickDragBtn span {
+	color: #fff;
+	font-size: 22px;
+	/* font-family: 'Avenir-Roman'; */
+	opacity: .8;
+}
+.lasso-screen-capture-ext.clickDragBtn img {
+	opacity: .5;
+	width: 20px;
+	margin-right: 12px;
+	position: relative;
+	top: -1px;
+}
+
