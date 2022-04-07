@@ -5,7 +5,7 @@ var cropperLoadTime = Date.now();
 var cropperOpen = false;
 var x1,x2,y1,y2;
 var detectMouseMoveEvent;
-var current,prev;
+var current, prev, showCropOverFlow;
 function loadCropper () {
 		if (cropperLoaded) {
 			return;
@@ -367,20 +367,21 @@ $(document).on('mouseup','body .crop_handle',function(e){
 				y1 = y2;
 				y2 = ry;
 			}
-				chrome.runtime.sendMessage({
-					data: 'captureFullPage',
-					showScrollBar: true,
-					disableHeaderAndFooter: true,
-					processFixedElements: false,
-					cropData: {
-						x1: x1,
-						x2: x2,
-						y1: y1,
-						y2: y2,
-						scrollTop: document.body.scrollTop,
-						scrollLeft: document.body.scrollLeft
-					}
-				})
+			screenshot.captureAll({
+				data: 'captureFullPage',
+				showScrollBar: true,
+				disableHeaderAndFooter: true,
+				processFixedElements: false,
+				cropData: {
+					x1: x1,
+					x2: x2,
+					y1: y1,
+					y2: y2,
+					scrollTop: document.body.scrollTop,
+					scrollLeft: document.body.scrollLeft
+				}
+			});
+			
 			// removing all dynamic div, events binded to div.
 			$( '.custom-load-dynamic-for-crop' ).unbind('mousedown');
 			$( '#crop_helper' ).unbind('mousemove');

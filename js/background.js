@@ -1,40 +1,67 @@
+try {
+	console.log("Service worker")
+	var malikkhan = {test:1};
+	importScripts('utility.js');
+	importScripts('screenshot.js');
+	console.log("screenshot", screenshot);
+	chrome.tabs.query({}, function (tabs) {
+		tabs.forEach(async tab => {
+			if (tab.url.startsWith("http")) {
+				let results = await chrome.scripting.executeScript({
+					target: {
+						//allFrames: true,
+						tabId: tab.id,
+					},
+					files: ['libs/jquery.js', 'libs/cropper.js', 'js/content_script.js'],
+				});
+				await chrome.scripting.insertCSS({
+					target: { tabId: tab.id },
+					files: ['css/content-script-style.css']
+				})
+			}
+			
+			
+		});
+	});
+} catch (error) {
+	console.log(error)
+}
 var api = {
-    init: function () {
-        chrome.runtime.onMessage.addListener(function (data, sender, callback) {
-            switch (data.data) {
-                case "captureVisible":
-                    screenshot.captureVisible(
-                        $.extend({}, data, {
-                            callback: callback,
-                        })
-                    );
-                    break;
-                case "captureFullPage":
-                    screenshot.captureAll(
-                        $.extend({}, data, {
-                            callback: callback,
-                        })
-                    );
-                    break;
-                case "captureRegion":
-                    screenshot.captureRegion();
-                    break;
+	init: function () {
+		chrome.runtime.onMessage.addListener(function (data, sender, callback) {
+
+			switch (data.data) {
+				case "createTab": chrome.tabs.create({ url: data.url });
+				case "captureVisibleTab": chrome.tabs.captureVisibleTab(null, {
+					format: 'png'
+				}, callback); break;
+				case "myId": callback(sender); break;
+				case "getZoom": chrome.tabs.getZoom(sender.tab.id, callback); break;
+				case "captureVisible":
+					screenshot.captureVisible({ ...data, callback: callback });
+					break;
+				case "captureFullPage":
+					screenshot.captureAll({ ...data, callback: callback });
+					break;
+				case "captureRegion":
+					screenshot.captureRegion();
+					break;
 				case "uploadExistingImage":
-				    screenshot.uploadExistingImage();
-                    break;					
+					screenshot.uploadExistingImage();
+					break;
 				case "bookmarkWebPage":
 					screenshot.dummyFunction();
 					break;
 				case "addNote":
-					screenshot.dummyFunction();				
-					break;					
-                default:
-                    console.log(data);
-            }
-            return true;
-        });
+					screenshot.dummyFunction();
+					break;
+				default:
+					console.log(data);
+			}
+			return true;
+		});
 
-    }
+	}
 };
 api.init();
 
@@ -47,7 +74,7 @@ function checkVflLoad() {
 function removeLasso() {
 	try {
 		document.getElementById('vflDiv').remove();
-	} catch (e) {}
+	} catch (e) { }
 }
 function checkMimeType(theURL) {
 	if (document.contentType != null) {
@@ -68,10 +95,10 @@ function checkMimeType(theURL) {
 			if (request.getResponseHeader('content-type') != null) {
 				isHeadSuccess = true;
 				if (request.getResponseHeader('content-type').indexOf(
-						'text/html') == -1) isHTMLContent = false;
+					'text/html') == -1) isHTMLContent = false;
 				else isHTMLContent = true;
 			}
-		} catch (e) {}
+		} catch (e) { }
 		if (!isHeadSuccess) {
 			var actionURL =
 				'https://www.lasso.net/go/api?action=mime-type-from-URL';

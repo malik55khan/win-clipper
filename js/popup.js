@@ -3,6 +3,11 @@
 	
 var protocol = "https:";
 var server ="//www.lasso.net/go/";
+chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+	if (tabs.length) {
+		if (!tabs[0].url.startsWith("http")) this.close(); return;
+	}
+});
 
 var popup = {
 	
@@ -16,7 +21,7 @@ var popup = {
 		$(".bookmark-web-page").click(popup.bookmarkWebPage);
     },
     captureVisible: function () {
-        popup.sendMessage({
+		popup.sendMessage({
             data: "captureVisible"
         });
     },
@@ -187,12 +192,28 @@ var popup = {
 		});
 		
     },	
-    sendMessage: function (data) {
-        chrome.runtime.sendMessage(data, function (x) {
+	sendMessage: function (data) {
+		chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+			if (tabs.length) {
+				console.log(tabs[0])
+				chrome.tabs.sendMessage(tabs[0].id, data, function (x) {
+					console.log(data);
+					this.close();
+				});
+			}
+		})
+
+        // chrome.runtime.sendMessage(data, function (x) {
+        //     console.log(data);
+		// 	this.close();
+        // });
+	},
+	sendMessageBG: function (data) { 
+		chrome.runtime.sendMessage(data, function (x) {
             console.log(data);
 			this.close();
         });
-    }
+	}
 };
 function openNewWindow(lassoURL) {
         var percentageWidth = screen.width / 100;

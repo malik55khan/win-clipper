@@ -1,58 +1,63 @@
 
 var screenshot = {
-	dummyFunction:function(data){
-		chrome.tabs.getSelected(null,function(tab) { // null defaults to current window
-			var title = tab.title;
-			var url = tab.url;
-			var description;
-			if (chrome.runtime.lastError) {
-                        //console.error(chrome.runtime.lastError);
+    dummyFunction: function (data) {
+        chrome.tabs.getSelected(null, function (tab) { // null defaults to current window
+            var title = tab.title;
+            var url = tab.url;
+            var description;
+            if (chrome.runtime.lastError) {
+                //console.error(chrome.runtime.lastError);
             }
-		});
-	},
-	uploadExistingImage:function (data){
-		screenshot.load(screenshot.addScreen);
+        });
+    },
+    uploadExistingImage: function (data) {
+        screenshot.load(screenshot.addScreen);
         screenshot.createBrowserProperties();
-		this.showPopup = true;
-		return true;
-	},
+        this.showPopup = true;
+        return true;
+    },
     captureVisible: function (data) {
-        $.extend(screenshot, {
-            scroll: false,
-            cropData: null,
-            retries: 0,
-            showScrollBar: true,
-            processFixedElements: false
-        }, data);
+        screenshot = {
+            ...screenshot, ...{
+                scroll: false,
+                cropData: null,
+                retries: 0,
+                showScrollBar: true,
+                processFixedElements: false
+            }, ...data
+        }
         localStorage['captureWithoutScroll']++;
         screenshot.load(screenshot.addScreen);
         screenshot.createBrowserProperties();
-		this.showPopup = false;
-		return true;
+        this.showPopup = false;
+        return true;
     },
     captureAll: function (data) {
-        $.extend(screenshot, {
-            scroll: true,
-            cropData: null,
-            retries: 0,
-            showScrollBar: false,
-            processFixedElements: true
-        }, data);
+        screenshot = {
+            ...screenshot, ...{
+                scroll: true,
+                cropData: null,
+                retries: 0,
+                showScrollBar: false,
+                processFixedElements: true
+            }, ...data
+        }
+
         localStorage['captureWithScroll']++;
         screenshot.load(screenshot.addScreen);
         screenshot.createBrowserProperties();
-		this.showPopup = false;
-		return true;
+        this.showPopup = false;
+        return true;
     },
-    captureRegion:function() {
+    captureRegion: function () {
         console.log('captureRegion');
-		this.showPopup = false;
+        this.showPopup = false;
         screenshot.tryGetUrl(function () {
             console.log('tryGetUrl', screenshot.thisTabId);
             screenshot.createBrowserProperties();
-            chrome.tabs.sendMessage(screenshot.thisTabId, $.extend({
+            chrome.tabs.sendMessage(screenshot.thisTabId,{
                 type: 'loadCropperWithoutSelect'
-            }, {}), function (response) {
+            }, function (response) {
                 if (response != "success") {
                     alert("Please refresh page and try again.");
                     console.log("Content script is not loaded.");
@@ -63,7 +68,7 @@ var screenshot = {
             });
 
         });
-		return true;
+        return true;
     },
     scroll: false,
     cropData: null,
@@ -88,11 +93,11 @@ var screenshot = {
     osVersion: '',
     thisTabPixelRatio: '',
     windowScreenSize: '',
-    browserProperties:{},
-    
+    browserProperties: {},
+
     tryGetUrl: function (callback) {
 
-        chrome.tabs.query({currentWindow: true, active: true}, function (w) {
+        chrome.tabs.query({ currentWindow: true, active: true }, function (w) {
             w = w[0];
             screenshot.thisTab = w;
             screenshot.thisTabId = w.id;
@@ -100,10 +105,10 @@ var screenshot = {
             screenshot.url = w.url;
             screenshot.title = w.title;
             screenshot.thisWindowId = w.windowId
-			
-           callback(screenshot.url);
-		    if (chrome.runtime.lastError) {
-                        //console.error(chrome.runtime.lastError);
+
+            callback(screenshot.url);
+            if (chrome.runtime.lastError) {
+                //console.error(chrome.runtime.lastError);
             }
         });
 
@@ -114,7 +119,7 @@ var screenshot = {
             screenshot.screens = [];
             screenshot.description = '';
             callback = function () {
-                window.setTimeout(realCallback, (parseInt(0, 10) || 0) * 1000)
+                setTimeout(realCallback, (parseInt(0, 10) || 0) * 1000)
             };
             if (!localStorage['captureCount']) localStorage['captureCount'] = 0;
             callback();
@@ -122,14 +127,16 @@ var screenshot = {
     },
     addScreen: function (data) {
         screenshot.retries++;
-        chrome.tabs.sendMessage(screenshot.thisTabId, $.extend({
+
+        chrome.tabs.sendMessage(screenshot.thisTabId, {
             cropData: screenshot.cropData,
             type: 'takeCapture',
             start: true,
             scroll: screenshot.scroll,
             showScrollBar: screenshot.showScrollBar,
-            processFixedElements: screenshot.processFixedElements
-        }, data), screenshot.ans);
+            processFixedElements: screenshot.processFixedElements,
+            ...data
+        }, screenshot.ans);
     },
     ans: function (mess) {
         if (!mess && chrome.runtime.lastError) {
@@ -138,7 +145,7 @@ var screenshot = {
                 console.log("Can not take this page screen shot");
                 return;
             } else if (screenshot.retries > 1) {
-                mess = {left: 0, top: 0, finish: true};
+                mess = { left: 0, top: 0, finish: true };
             } else {
                 screenshot.addScreen();
                 return;
@@ -159,8 +166,8 @@ var screenshot = {
             if (chrome.runtime.lastError) {
                 console.error(chrome.runtime.lastError);
             }
-            if ((mess.top || parseInt(mess.top) == 0 )) {
-                screenshot.screens.push({left: parseInt(mess.left), top: parseInt(mess.top), data: data});
+            if ((mess.top || parseInt(mess.top) == 0)) {
+                screenshot.screens.push({ left: parseInt(mess.left), top: parseInt(mess.top), data: data });
             }
             if (mess.finish) {
                 screenshot.screenShotParams = mess;
@@ -172,8 +179,8 @@ var screenshot = {
             }
         };
         setTimeout(function () {
-            chrome.windows.update(screenshot.thisWindowId, {focused: true}, function () {
-                chrome.tabs.update(screenshot.thisTabId, {active: true}, function () {
+            chrome.windows.update(screenshot.thisWindowId, { focused: true }, function () {
+                chrome.tabs.update(screenshot.thisTabId, { active: true }, function () {
                     if (chrome.runtime.lastError) {
                         //console.error(chrome.runtime.lastError);
                     }
@@ -186,7 +193,7 @@ var screenshot = {
     },
     createScreenShot: function () {
         var mess = screenshot.screenShotParams;
-        chrome.tabs.sendMessage(screenshot.thisTabId, {type: 'finish'});
+        chrome.tabs.sendMessage(screenshot.thisTabId, { type: 'finish' });
         var img = [];
         screenshot.canvas = document.createElement('canvas');
         var firstTime = true;
@@ -211,7 +218,7 @@ var screenshot = {
                 img[i].remove()
                 img[i] = null
                 if (i == screenshot.screens.length - 1) {
-                    chrome.tabs.create({url: chrome.extension.getURL('screenshot.html')});
+                    chrome.tabs.create({ url: chrome.extension.getURL('screenshot.html') });
                     return;
                 }
                 loadImage(++i);
@@ -229,13 +236,13 @@ var screenshot = {
 
         chrome.tabs.query({ currentWindow: true, active: true }, function (w) {
             w = w[0];
-            chrome.tabs.getZoom(screenshot.thisTabId,function(zoomFactor){  screenshot.browserProperties.zoomLevel = Math.round(zoomFactor * 100);  });
+            chrome.tabs.getZoom(screenshot.thisTabId, function (zoomFactor) { screenshot.browserProperties.zoomLevel = Math.round(zoomFactor * 100); });
             screenshot.browserProperties.chromeVersion = navigator.userAgent.match(/Chrom(?:e|ium)\/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)/)[0].split("/")[1];
             screenshot.browserProperties.screenSize = screen.width + " x " + screen.height;
             screenshot.browserProperties.osVersion = navigator.appVersion.split("(")[1].split(";")[0];
-            screenshot.browserProperties.pixelRatio = window.devicePixelRatio;
-			 if (chrome.runtime.lastError) {
-                        //console.error(chrome.runtime.lastError);
+            //screenshot.browserProperties.pixelRatio = window.devicePixelRatio;
+            if (chrome.runtime.lastError) {
+                //console.error(chrome.runtime.lastError);
             }
         });
     }
