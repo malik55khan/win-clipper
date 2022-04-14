@@ -1,26 +1,27 @@
 ﻿
 
-chrome.runtime.onMessage.addListener(function (data, sender, callback) { 
+chrome.runtime.onMessage.addListener(function (data, sender, callback) {
     chrome.tabs.query({}, (tabs) => {
-        
+
         let tab = tabs.find(tab => tab.url.startsWith("http"));
-        chrome.tabs.sendMessage(tab.id,data);
+        //chrome.tabs.sendMessage(tab.id,data);
     });
 })
-chrome.storage.local.get((storage) => {
-    
 
-    var canvas = new fabric.Canvas('annotate-canvas');
-    var colorToUse = "#000000";
-    var currentObjectToDraw;
-    var redoObjects = [];
-    var deltaX, deltaY, line, tringle, currentActiveDrawingObj;
-    canvas.selection = false;
-    var canvasImageContainsSelectedAreaCapture = false;
-    var textPaddingTopBottom = 8;
-    var textPaddingLeftRight = 10;
-    $(function () {
-        
+
+
+var canvas = new fabric.Canvas('annotate-canvas');
+var colorToUse = "#000000", storage;
+var currentObjectToDraw;
+var redoObjects = [];
+var deltaX, deltaY, line, tringle, currentActiveDrawingObj;
+canvas.selection = false;
+var canvasImageContainsSelectedAreaCapture = false;
+var textPaddingTopBottom = 8;
+var textPaddingLeftRight = 10;
+$(function () {
+    chrome.storage.local.get((str) => {
+        storage = str;
         fabric.Image.fromURL(storage.dataURL, function (img) {
             canvasImageContainsSelectedAreaCapture = false;
             //fabric.Image.fromURL("screenshot.png", function (img) {
@@ -53,8 +54,20 @@ chrome.storage.local.get((storage) => {
             }
             canvas.renderAll();
         });
-    
+        $('.closeButtonUpload').click(function () {
+            $("#myModalImage").hide();
+        });
+        var left = screen.width / 2 - 180;
+        var topPx = screen.height / 3 - 105;
+        $(".addCorralImage").css("left", left + "px");
+        $(".addCorralImage").css("top", topPx + "px");
+        if (typeof storage.screenshot.showPopup !== 'undefined' && storage.screenshot.showPopup == true) {
+            $('.browse-image').click();
+            $('#annotate-canvas').hide();
+            $('.upper-canvas').hide();
+        }
     });
+
 
     canvas.on('object:added', (e) => {
         $(".button.undo").css("pointer-events", "auto");
@@ -76,13 +89,7 @@ chrome.storage.local.get((storage) => {
         }
     })
 
-    function updateModifications(savehistory) {
-        if (savehistory === true) {
-            myjson = JSON.stringify(canvas);
-            console.log(myjson);
 
-        }
-    }
 
     $('.button.rectangle').click(function () {
         $('.button').removeClass("active");
@@ -111,7 +118,13 @@ chrome.storage.local.get((storage) => {
 
     });
 
+    function updateModifications(savehistory) {
+        if (savehistory === true) {
+            myjson = JSON.stringify(canvas);
+            console.log(myjson);
 
+        }
+    }
     function getArrow(x, y) {
         var points = [x, y, x, y];
         line = new fabric.Line(points, {
@@ -191,7 +204,7 @@ chrome.storage.local.get((storage) => {
                 options.e.preventDefault();
                 this.selectLine(this.getSelectionStartFromPointer(options.e));
             }
-        
+
         });
         return text;
 
@@ -404,11 +417,11 @@ chrome.storage.local.get((storage) => {
         reader.onload = function (event) {
             var data = event.target.result;
             fabric.Image.fromURL(data, function (img) {
-			
+
                 canvasImageContainsSelectedAreaCapture = false;
                 console.log("Image-width: " + img.width + " Window: " + window.innerWidth);
                 var widthToConsider = 1000;
-			
+
                 if (window.innerWidth) {
                     widthToConsider = window.innerWidth * 1;
                     //The reason behind -30 is, sometime its observed that image width is coming 15px lesser than window width inside visible capture. So in that case, image went to small 80%
@@ -416,11 +429,11 @@ chrome.storage.local.get((storage) => {
                         widthToConsider = img.width * 0.8;
                     }
                 }
-			
+
                 $(".editContainer").css("max-width", widthToConsider);
                 canvas.setHeight(img.height * widthToConsider / img.width);
                 canvas.setWidth(widthToConsider);
-			
+
                 if (!canvasImageContainsSelectedAreaCapture) {
                     canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
                         scaleX: canvas.width / img.width,
@@ -436,8 +449,8 @@ chrome.storage.local.get((storage) => {
                 $('#annotate-canvas').show();
                 $('.upper-canvas').show();
             });
-		  
-       
+
+
         }
         reader.readAsDataURL(e.target.files[0]);
     }
@@ -613,34 +626,24 @@ chrome.storage.local.get((storage) => {
     }
 
 
-    /**
+    
+    
+});
+/**
      * Get the image data from canvas
      */
-    function getImageData() {
-        var imgData;
-        if (canvasImageContainsSelectedAreaCapture) {
-            imgData = canvas.toDataURL({
-                format: 'png',
-                multiplier: 1.2
-            });
-        } else {
-            imgData = canvas.toDataURL({
-                format: 'png',
-                multiplier: canvas.backgroundImage.width / canvas.width
-            });
-        }
-        return imgData;
+function getImageData() {
+    var imgData;
+    if (canvasImageContainsSelectedAreaCapture) {
+        imgData = canvas.toDataURL({
+            format: 'png',
+            multiplier: 1.2
+        });
+    } else {
+        imgData = canvas.toDataURL({
+            format: 'png',
+            multiplier: canvas.backgroundImage.width / canvas.width
+        });
     }
-    $('.closeButtonUpload').click(function () {
-        $("#myModalImage").hide();
-    });
-    var left = screen.width / 2 - 180;
-    var topPx = screen.height / 3 - 105;
-    $(".addCorralImage").css("left", left + "px");
-    $(".addCorralImage").css("top", topPx + "px");
-    if (typeof storage.screenshot.showPopup !== 'undefined' && storage.screenshot.showPopup == true) {
-        $('.browse-image').click();
-        $('#annotate-canvas').hide();
-        $('.upper-canvas').hide();
-    }
-});
+    return imgData;
+}

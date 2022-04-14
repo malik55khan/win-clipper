@@ -2,9 +2,11 @@ function zoomLevel() {
     return document.width / jQuery(document).width()
 }
 
+const delay = t=> new Promise(r=>setTimeout(r,t))
 var hideTheScrollBars;
 var cropData;
 var $window = $(window);
+localStorage['captureWithScroll'] = 0;
 var screenshot = {
     dummyFunction: function (data) {
         chrome.tabs.getSelected(null, function (tab) { // null defaults to current window
@@ -20,23 +22,23 @@ var screenshot = {
         screenshot.load(screenshot.addScreen);
         screenshot.createBrowserProperties();
         this.showPopup = true;
+        if (data.callback) data.callback(true)
         return true;
     },
     captureVisible: function (data) {
-        screenshot = {
-            ...screenshot, ...{
-                scroll: false,
-                cropData: null,
-                retries: 0,
-                showScrollBar: true,
-                processFixedElements: false
-            }, ...data
-        }
+        $.extend(screenshot, {
+            scroll: false,
+            cropData: null,
+            retries: 0,
+            showScrollBar: true,
+            processFixedElements: false
+        }, data);
         localStorage['captureWithoutScroll']++;
         screenshot.load(screenshot.addScreen);
         screenshot.createBrowserProperties();
         this.showPopup = false;
-        
+        if (data.callback)
+        data.callback(true)
         return true;
     },
     captureAll: function (data) {
@@ -51,14 +53,15 @@ var screenshot = {
         screenshot.load(screenshot.addScreen);
         screenshot.createBrowserProperties();
         this.showPopup = false;
+        if (data.callback) data.callback(true)
         return true;
     },
-    captureRegion: function () {
-        console.log('captureRegion');
+    captureRegion: function (data) {
+        
         this.showPopup = false;
         
         screenshot.tryGetUrl(function () {
-            console.log('tryGetUrl', screenshot.thisTabId);
+            
             screenshot.createBrowserProperties();
             page.onRequest({
                 type: 'loadCropperWithoutSelect'
@@ -74,6 +77,7 @@ var screenshot = {
             
 
         });
+        if (data.callback) data.callback(true)
         return true;
     },
     scroll: false,
@@ -135,15 +139,14 @@ var screenshot = {
     },
     addScreen: function (data) {
         screenshot.retries++;
-        page.onRequest({
+        page.onRequest($.extend({
             cropData: screenshot.cropData,
             type: 'takeCapture',
             start: true,
             scroll: screenshot.scroll,
             showScrollBar: screenshot.showScrollBar,
-            processFixedElements: screenshot.processFixedElements,
-            ...data
-        }, null, screenshot.ans);
+            processFixedElements: screenshot.processFixedElements
+        }, data), null, screenshot.ans);
         //takeCapture(screenshot.ans, );
         return;
         chrome.tabs.sendMessage(screenshot.thisTabId, {
@@ -221,10 +224,10 @@ var screenshot = {
         screenshot.canvas = document.createElement('canvas');
         var firstTime = true;
         var i = 0;
-        loadImage = function (i) {
+        loadImage =  function (i) {
             ctx = screenshot.canvas.getContext('2d');
             img[i] = $('<img tag=' + i + '/>');
-            img[i].on("load", function () {
+            img[i].on("load", async function () {
                 var i;
                 i = parseInt($(this).attr('tag'));
                 if (firstTime) {
@@ -241,13 +244,8 @@ var screenshot = {
                 img[i].remove()
                 img[i] = null
                 if (i == screenshot.screens.length - 1) {
-                    chrome.storage.local.set({screenshot:screenshot, 'dataURL': screenshot.canvas.toDataURL() });
-                    setTimeout(() => {
-                        chrome.runtime.sendMessage({ data: "createTab", url: chrome.runtime.getURL('screenshot.html') })
-
-                    },500)
-                    
-                    //chrome.tabs.create({ url: chrome.extension.getURL('screenshot.html') });
+                    await chrome.storage.local.set({ screenshot: screenshot,  'dataURL': screenshot.canvas.toDataURL() });
+                    chrome.runtime.sendMessage({ data: "createTab", url: chrome.runtime.getURL('screenshot.html') })
                     return;
                 }
                 loadImage(++i);
@@ -283,7 +281,6 @@ var screenshot = {
 
 
 chrome.runtime.onMessage.addListener(function (data, sender, callback) {
-    console.log(data.data)
     switch (data.data) {
         case "captureVisible":
             screenshot.captureVisible({ ...data, callback: callback });
@@ -292,14 +289,19 @@ chrome.runtime.onMessage.addListener(function (data, sender, callback) {
             screenshot.captureAll({ ...data, callback: callback });
             break;
         case "captureRegion":
-            screenshot.captureRegion();
+            screenshot.captureRegion({ ...data, callback: callback });
             break;
         case "uploadExistingImage":
-            screenshot.uploadExistingImage();
+            screenshot.uploadExistingImage({ ...data, callback: callback });
             break;
         case "bookmarkWebPage":
             screenshot.dummyFunction();
             break;
+        case "getPageInfo": callback({
+            url : document.location.toString(),
+            title : document.title,
+            description : $('meta[name=description]').attr('content'),
+        }); break;
         case "addNote":
             screenshot.dummyFunction();
             break;
@@ -567,11 +569,13 @@ var page = {
             load_cropper_without_selection(x1,y1,x2,y2);
         });
  },
-    onRequest: function (mess, sender, callback) {
+    onRequest: async function (mess, sender, callback) {
+        console.log(mess.type)
         if (mess.type == 'checkExist') {
             callback();
             return;
         }
+        await delay(200);
         if (mess.start) {
             page.saveScrollPos();
             var defaults = {
@@ -767,4 +771,3 @@ function dectect_zoom() {
         return devicePixelRatio
     }
 }
-

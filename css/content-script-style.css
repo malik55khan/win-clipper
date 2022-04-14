@@ -33,4 +33,6 @@
 	position: relative;
 	top: -1px;
 }
-
+.custom-load-dynamic-for-crop{
+	cursor: crosshair;
+}
