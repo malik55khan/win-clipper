@@ -1,0 +1,133 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+}
+
+.liElement ul {
+    list-style: none;
+}
+
+.context-menu {
+    position: fixed;
+    min-width: 145px;
+    left: 115px;
+    /* border: 1px solid #eaeef1; */
+    background: white;
+    z-index: 9999999;
+    overflow: visible !important;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    margin: 0 !important
+}
+
+.menu:before,
+.menu:after {
+    display: block;
+    content: '';
+    width: 0;
+    height: 0;
+    top: 2px;
+    left: -7px;
+    position: absolute;
+    border: 7px outset transparent;
+    transform: rotate(272deg);
+    top: 5px;
+}
+
+.menu li:last-child:hover {}
+
+.menu li:first-child:hover {}
+
+.menu li:first-child,
+.menu li:last-child {
+    z-index: 9
+}
+
+.menu-top:after,
+.menu-top:before {
+    top: 5px;
+}
+
+.menu-bottom:after,
+.menu-bottom:before {
+    top: 165px;
+}
+
+.menu:after {
+    border-bottom: 7px solid #fff;
+    left: -12.4px;
+}
+
+.menu:before {
+    border-bottom: 7px solid #ccc;
+    left: -14px;
+}
+
+.menu>li>span {
+    font-family: 'Avenir-Medium';
+    border: 0;
+    padding: 5px 15px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    text-decoration: unset;
+    text-transform: none !important;
+    cursor: pointer;
+    font-weight: normal;
+    font-size: 13px;
+    color: #484848;
+}
+
+
+
+.context-menu .menu li {
+    border-bottom: 1px solid #ccc;
+
+}
+
+.context-menu .menu li:last-child {
+    border-bottom: none
+}
+
+.context-menu .menu li:hover {
+    background-color: #249356;
+    color: white !important;
+}
+
+.context-menu .menu li:hover>span {
+    color: white !important;
+}
+.menu-top-right:after,
+.menu-top-right:before {
+    top: 5px;
+}
+
+.menu-top-left:after,
+.menu-top-left:before {
+    top: 5px;
+    left: 142.6px !important;
+    transform: rotate(90deg);
+}
+
+.menu-bottom-left:after,
+.menu-bottom-left:before {
+    top: 140px;
+    left: 142.6px !important;
+    transform: rotate(90deg);
+}
+
+.menu-bottom-right:after,
+.menu-bottom-right:before {
+    top: 140px;
+
+}
+
+
+
